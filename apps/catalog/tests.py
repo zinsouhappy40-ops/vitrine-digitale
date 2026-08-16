@@ -1,12 +1,17 @@
 from decimal import Decimal
+from io import BytesIO
+from tempfile import TemporaryDirectory
 
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError, transaction
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from PIL import Image
 
 from apps.businesses.models import Business
 
 from .models import Category, Product
+from .forms import ProductForm
 from .services import (
     create_category,
     create_or_update_product,
@@ -97,3 +102,52 @@ class CatalogServiceTests(TestCase):
                 business=self.business_a,
                 name="Accessoires",
             )
+
+
+class ProductImageIntegrationTests(TestCase):
+    def setUp(self):
+        self.media_directory = TemporaryDirectory()
+        self.settings_override = override_settings(
+            MEDIA_ROOT=self.media_directory.name
+        )
+        self.settings_override.enable()
+        self.business = Business.objects.create(name="Boutique image")
+        self.category = Category.objects.create(
+            business=self.business,
+            name="Divers",
+        )
+
+    def tearDown(self):
+        self.settings_override.disable()
+        self.media_directory.cleanup()
+
+    def test_product_upload_is_resized_and_saved_with_uuid_name(self):
+        output = BytesIO()
+        Image.new("RGB", (1800, 900), color="blue").save(output, format="PNG")
+        upload = SimpleUploadedFile(
+            "original-product.png",
+            output.getvalue(),
+            content_type="image/png",
+        )
+        form = ProductForm(
+            data={
+                "name": "Produit illustré",
+                "price": "2500",
+                "category": self.category.pk,
+                "description": "",
+                "status": Product.Status.ACTIVE,
+            },
+            files={"image": upload},
+            business=self.business,
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+        product = create_or_update_product(
+            business=self.business,
+            cleaned_data=form.cleaned_data,
+        )
+
+        self.assertRegex(product.image.name, r"^products/[0-9a-f]{32}\.jpg$")
+        with product.image.open("rb") as stored_image:
+            image = Image.open(stored_image)
+            self.assertLessEqual(image.width, 1200)

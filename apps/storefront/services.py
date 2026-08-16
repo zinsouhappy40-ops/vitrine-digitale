@@ -60,7 +60,7 @@ def build_page_meta(request, business, product=None):
     image_url = (
         request.build_absolute_uri(image.url)
         if image
-        else request.build_absolute_uri(static("images/product-placeholder.svg"))
+        else request.build_absolute_uri(static("images/social-default.png"))
     )
     return {
         "title": title,

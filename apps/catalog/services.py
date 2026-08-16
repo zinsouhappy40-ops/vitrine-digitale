@@ -78,8 +78,15 @@ def create_or_update_product(*, business, cleaned_data, product=None):
     return product
 
 
+@transaction.atomic
 def delete_product(product):
+    image_name = product.image.name if product.image else None
+    storage = product.image.storage if product.image else None
     product.delete()
+    if image_name:
+        transaction.on_commit(
+            lambda storage=storage, name=image_name: storage.delete(name)
+        )
 
 
 def toggle_product_status(product):

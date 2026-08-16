@@ -71,6 +71,13 @@ DATABASES = {
 DATABASES["default"]["CONN_MAX_AGE"] = 60
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "vitrine-digitale",
+    }
+}
+
 # AUTHENTICATION
 AUTH_USER_MODEL = "accounts.User"
 LOGIN_URL = "accounts:login"
@@ -147,6 +154,13 @@ SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SECURE = DJANGO_ENV == "production"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
+SECURE_REFERRER_POLICY = "same-origin"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = DJANGO_ENV == "production"
+SECURE_HSTS_SECONDS = 31536000 if DJANGO_ENV == "production" else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = DJANGO_ENV == "production"
+SECURE_HSTS_PRELOAD = DJANGO_ENV == "production"
 
 # LOCALIZATION
 LANGUAGE_CODE = "fr-fr"

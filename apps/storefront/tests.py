@@ -10,6 +10,7 @@ class StorefrontTests(TestCase):
         self.business_a = Business.objects.create(
             name="Boutique A",
             description="La boutique A",
+            whatsapp_number="22997000000",
         )
         self.business_b = Business.objects.create(name="Boutique B")
         self.category_a = Category.objects.create(
@@ -93,3 +94,29 @@ class StorefrontTests(TestCase):
 
         self.assertEqual(unknown_response.status_code, 404)
         self.assertEqual(suspended_response.status_code, 404)
+
+    def test_public_pages_include_open_graph_and_whatsapp(self):
+        home_response = self.client.get(
+            reverse("storefront:home", args=[self.business_a.slug])
+        )
+        product_response = self.client.get(
+            reverse(
+                "storefront:product_detail",
+                args=[self.business_a.slug, self.active_a.pk],
+            )
+        )
+
+        self.assertContains(home_response, 'property="og:title"')
+        self.assertContains(home_response, "social-default.png")
+        self.assertContains(home_response, "https://wa.me/22997000000")
+        self.assertContains(product_response, self.active_a.name)
+        self.assertContains(product_response, "%3A+Chemise+A")
+
+    def test_qr_endpoint_returns_png(self):
+        response = self.client.get(
+            reverse("storefront:qr", args=[self.business_a.slug])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/png")
+        self.assertTrue(response.content.startswith(b"\x89PNG\r\n\x1a\n"))
