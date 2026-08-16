@@ -1,0 +1,95 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+
+{% block title %}{{ business.name }} | Vitrine en ligne{% endblock %}
+
+{% block storefront_content %}
+<main>
+  <section class="bg-ink-950 text-white">
+    <div class="mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1fr_0.8fr] lg:items-end lg:px-8 lg:py-20">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-mango-500">Bienvenue chez</p>
+        <h1 class="mt-4 max-w-3xl break-words text-4xl font-semibold leading-[1.08] tracking-[-0.04em] sm:text-6xl">{{ business.name }}</h1>
+        {% if business.description %}<p class="mt-5 max-w-2xl text-lg leading-8 text-slate-300">{{ business.description }}</p>{% endif %}
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          {% if whatsapp_url %}<a href="{{ whatsapp_url }}" class="inline-flex min-h-12 items-center justify-center rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-white hover:bg-emerald-600">Contacter sur WhatsApp</a>{% endif %}
+          <a href="{% url 'storefront:catalogue' business.slug %}" class="inline-flex min-h-12 items-center justify-center rounded-xl {% if whatsapp_url %}border border-white/30 text-white{% else %}bg-mango-500 text-ink-950 hover:bg-mango-600{% endif %} px-6 py-3 font-semibold">Voir le catalogue</a>
+        </div>
+      </div>
+      <div class="hidden justify-self-end lg:block" aria-hidden="true">
+        <svg viewBox="0 0 280 190" class="w-64 text-mango-500" fill="none" stroke="currentColor" stroke-width="3">
+          <path d="M28 80h224l-18-48H46L28 80Z" fill="currentColor"/>
+          <path d="M42 80v84h196V80M102 164v-52h76v52" stroke="white"/>
+          <path d="M66 32 56 80M104 32l-4 48M140 32v48M176 32l4 48M214 32l10 48" stroke="#12182b"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  {% if categories %}
+    <section class="mx-auto max-w-6xl px-5 pt-10 sm:px-6 lg:px-8">
+      <p class="text-sm font-semibold text-slate-500">Parcourir par catégorie</p>
+      <div class="mt-4 flex gap-2 overflow-x-auto pb-2">
+        {% for category in categories %}
+          <a href="{% url 'storefront:catalogue' business.slug %}?categorie={{ category.pk }}" class="min-h-11 shrink-0 rounded-full border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink-950 hover:border-ink-700">{{ category.name }}</a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <section class="mx-auto max-w-6xl px-5 py-12 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="text-sm font-semibold text-ink-700">Notre sélection</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-[-0.03em] text-ink-950">Produits disponibles</h2>
+      </div>
+      {% if products %}<a href="{% url 'storefront:catalogue' business.slug %}" class="text-sm font-semibold text-ink-700">Tout voir</a>{% endif %}
+    </div>
+
+    {% if products %}
+      <div class="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {% for product in products %}
+          <a href="{% url 'storefront:product_detail' business.slug product.pk %}" class="group overflow-hidden rounded-2xl border border-line bg-white transition hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="aspect-[4/3] overflow-hidden bg-surface">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy">
+              {% else %}
+                <img src="{% static 'images/product-placeholder.svg' %}" alt="" class="h-full w-full object-cover" loading="lazy">
+              {% endif %}
+            </div>
+            <div class="p-4">
+              <p class="text-sm font-medium text-slate-500">{{ product.category.name }}</p>
+              <h3 class="mt-1 break-words text-lg font-semibold leading-6 text-ink-950">{{ product.name }}</h3>
+              <p class="mt-3 font-semibold text-ink-800">{{ product.price|floatformat:0 }} {{ business.currency }}</p>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="mt-7 rounded-2xl border border-dashed border-slate-300 bg-surface p-8 text-center">
+        <p class="font-semibold text-ink-950">Le catalogue est en préparation.</p>
+        <p class="mt-2 text-sm text-slate-600">Revenez bientôt pour découvrir les produits.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if business.address or business.opening_hours or business.phone %}
+    <section class="mx-auto max-w-6xl px-5 pb-4 sm:px-6 lg:px-8">
+      <div class="rounded-2xl bg-surface p-6 sm:p-8">
+        <h2 class="text-xl font-semibold text-ink-950">Informations pratiques</h2>
+        <div class="mt-5 grid gap-4 text-sm text-slate-600 sm:grid-cols-3">
+          {% if business.address %}<p><span class="block font-semibold text-ink-950">Adresse</span><span class="mt-1 block">{{ business.address }}</span></p>{% endif %}
+          {% if business.opening_hours %}<p><span class="block font-semibold text-ink-950">Horaires</span><span class="mt-1 block">{{ business.opening_hours }}</span></p>{% endif %}
+          {% if business.phone %}<p><span class="block font-semibold text-ink-950">Téléphone</span><span class="mt-1 block">{{ business.phone }}</span></p>{% endif %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+  {% if whatsapp_url %}
+    <section class="mx-auto max-w-6xl px-5 pt-10 text-center sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-semibold text-ink-950">Une question sur un produit ?</h2>
+      <a href="{{ whatsapp_url }}" class="mt-5 inline-flex min-h-12 items-center justify-center rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-white hover:bg-emerald-600">Écrire sur WhatsApp</a>
+    </section>
+  {% endif %}
+</main>
+{% endblock %}

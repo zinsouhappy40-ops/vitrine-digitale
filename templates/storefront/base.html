@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-dvh bg-white">
+  <header class="border-b border-line bg-white">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <a href="{% url 'storefront:home' business.slug %}" class="flex min-w-0 items-center gap-3">
+        {% if business.logo %}
+          <img src="{{ business.logo.url }}" alt="Logo de {{ business.name }}" class="size-10 rounded-xl object-cover">
+        {% else %}
+          <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-ink-950 font-semibold text-mango-500" aria-hidden="true">{{ business.name|slice:':1'|upper }}</span>
+        {% endif %}
+        <span class="truncate font-semibold text-ink-950">{{ business.name }}</span>
+      </a>
+      <nav class="flex items-center gap-1" aria-label="Navigation de la vitrine">
+        <a href="{% url 'storefront:catalogue' business.slug %}" class="min-h-11 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-950 hover:bg-surface">Catalogue</a>
+        <a href="{% url 'storefront:contact' business.slug %}" class="min-h-11 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-950 hover:bg-surface">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  {% block storefront_content %}{% endblock %}
+
+  <footer class="mt-16 border-t border-line bg-surface">
+    <div class="mx-auto max-w-6xl px-5 py-8 sm:px-6 lg:px-8">
+      <p class="font-semibold text-ink-950">{{ business.name }}</p>
+      <p class="mt-2 text-sm text-slate-500">Catalogue en ligne propulsé par Vitrine Digitale.</p>
+    </div>
+  </footer>
+</div>
+{% endblock %}

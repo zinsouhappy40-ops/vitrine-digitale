@@ -1,0 +1,22 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Vitrine Digitale{% endblock %}</title>
+  {% if meta %}
+    <meta name="description" content="{{ meta.description }}">
+    <meta property="og:title" content="{{ meta.title }}">
+    <meta property="og:description" content="{{ meta.description }}">
+    <meta property="og:image" content="{{ meta.image_url }}">
+    <meta property="og:url" content="{{ meta.url }}">
+    <meta property="og:type" content="website">
+  {% endif %}
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+  {% include "shared/messages.html" %}
+  {% block content %}{% endblock %}
+</body>
+</html>

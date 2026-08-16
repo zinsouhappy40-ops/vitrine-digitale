@@ -1,0 +1,22 @@
+{% extends "storefront/base.html" %}
+
+{% block title %}Contact | {{ business.name }}{% endblock %}
+
+{% block storefront_content %}
+<main class="mx-auto max-w-4xl px-5 py-10 sm:px-6 lg:px-8 lg:py-16">
+  <p class="text-sm font-semibold text-ink-700">{{ business.name }}</p>
+  <h1 class="mt-2 text-4xl font-semibold tracking-[-0.04em] text-ink-950">Nous contacter</h1>
+  <p class="mt-4 max-w-xl leading-7 text-slate-600">Retrouvez les informations utiles pour joindre le commerce ou venir sur place.</p>
+
+  <div class="mt-9 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
+    {% if business.address %}<div class="p-5 sm:p-6"><p class="text-sm font-semibold text-slate-500">Adresse</p><p class="mt-2 text-lg font-semibold text-ink-950">{{ business.address }}</p></div>{% endif %}
+    {% if business.phone %}<div class="p-5 sm:p-6"><p class="text-sm font-semibold text-slate-500">Téléphone</p><a href="tel:{{ business.phone }}" class="mt-2 block text-lg font-semibold text-ink-950">{{ business.phone }}</a></div>{% endif %}
+    {% if business.opening_hours %}<div class="p-5 sm:p-6"><p class="text-sm font-semibold text-slate-500">Horaires</p><p class="mt-2 text-lg font-semibold text-ink-950">{{ business.opening_hours }}</p></div>{% endif %}
+    {% if not business.address and not business.phone and not business.opening_hours %}<p class="p-6 text-slate-600">Les informations de contact seront bientôt disponibles.</p>{% endif %}
+  </div>
+  <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+    {% if whatsapp_url %}<a href="{{ whatsapp_url }}" class="inline-flex min-h-12 items-center justify-center rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-white">Contacter sur WhatsApp</a>{% endif %}
+    <a href="{% url 'storefront:qr' business.slug %}" class="inline-flex min-h-12 items-center justify-center rounded-xl border border-line px-6 py-3 font-semibold text-ink-950">Afficher le QR code</a>
+  </div>
+</main>
+{% endblock %}

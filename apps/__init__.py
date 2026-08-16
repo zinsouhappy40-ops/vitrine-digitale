@@ -1,0 +1,1 @@
+"""Vitrine Digitale Django applications."""
