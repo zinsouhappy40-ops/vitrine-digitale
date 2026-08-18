@@ -68,6 +68,38 @@ class StorefrontTests(TestCase):
         self.assertContains(response_b, self.active_b.name)
         self.assertNotContains(response_b, self.active_a.name)
 
+    def test_category_cover_can_come_from_product_outside_home_selection(self):
+        for index in range(5):
+            Product.objects.create(
+                business=self.business_a,
+                category=self.category_a,
+                name=f"Article {index}",
+                price=1000,
+            )
+        category = Category.objects.create(
+            business=self.business_a,
+            name="Soins",
+        )
+        cover = Product.objects.create(
+            business=self.business_a,
+            category=category,
+            name="Z Cover",
+            price=2000,
+            image="products/cover.jpg",
+        )
+
+        response = self.client.get(
+            reverse("storefront:home", args=[self.business_a.slug])
+        )
+
+        self.assertNotIn(cover, response.context["products"])
+        tile = next(
+            item
+            for item in response.context["category_tiles"]
+            if item["category"] == category
+        )
+        self.assertEqual(tile["product"], cover)
+
     def test_malformed_category_filter_returns_404(self):
         response = self.client.get(
             reverse("storefront:catalogue", args=[self.business_a.slug]),

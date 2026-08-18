@@ -22,6 +22,18 @@ def get_home_content(business):
     return categories, products
 
 
+def get_category_cover_products(business):
+    covers = {}
+    products = (
+        get_active_products(business)
+        .exclude(image__isnull=True)
+        .exclude(image="")
+    )
+    for product in products:
+        covers.setdefault(product.category_id, product)
+    return covers
+
+
 def group_catalog_products(business, selected_category=None):
     categories = list(get_storefront_categories(business))
     products = list(get_active_products(business))

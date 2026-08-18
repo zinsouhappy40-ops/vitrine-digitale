@@ -9,6 +9,7 @@ from apps.core.qrcode import generate_qr_png
 from .services import (
     get_active_products,
     build_page_meta,
+    get_category_cover_products,
     get_whatsapp_url,
     get_home_content,
     get_storefront_categories,
@@ -20,17 +21,11 @@ def home(request, slug):
     business = get_public_business(slug)
     categories, products = get_home_content(business)
     hero_products = [product for product in products if product.image][:4]
+    category_covers = get_category_cover_products(business)
     category_tiles = [
         {
             "category": category,
-            "product": next(
-                (
-                    product
-                    for product in products
-                    if product.category_id == category.id and product.image
-                ),
-                None,
-            ),
+            "product": category_covers.get(category.id),
         }
         for category in categories
     ]
