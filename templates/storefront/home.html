@@ -5,8 +5,10 @@
 
 {% block storefront_content %}
 <main id="contenu">
-  <section class="bg-cream-alt">
-    <div class="mx-auto max-w-7xl px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
+  <section class="relative overflow-hidden bg-cream-alt">
+    <img src="{% static 'images/demo-boutique-hero.jpg' %}" alt="" class="pointer-events-none absolute inset-0 h-full w-full scale-105 object-cover blur-[3px]" aria-hidden="true">
+    <span class="pointer-events-none absolute inset-0 bg-cream-alt/80 lg:bg-gradient-to-r lg:from-cream-alt/95 lg:via-cream-alt/80 lg:to-cream-alt/55" aria-hidden="true"></span>
+    <div class="relative mx-auto max-w-7xl px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
       <div class="{% if hero_products %}grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16{% else %}mx-auto max-w-3xl py-12 text-center lg:py-20{% endif %}">
         <div>
           <p class="tech-label text-ink-700">{{ categories|length }} catégorie{{ categories|length|pluralize }}</p>

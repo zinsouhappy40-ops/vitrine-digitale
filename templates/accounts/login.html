@@ -1,12 +1,15 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Connexion | Vitrine Digitale{% endblock %}
 
 {% block content %}
 <main id="contenu" class="grid min-h-dvh bg-surface lg:grid-cols-2">
-  <section class="relative hidden overflow-hidden border-r border-line bg-cream-alt p-12 lg:flex lg:flex-col lg:justify-between">
-    <a href="{% url 'accounts:login' %}" class="inline-flex items-center gap-3 font-medium text-ink-950">
-      <span class="grid size-10 place-items-center border border-mango-500" aria-hidden="true">
+  <section class="relative hidden overflow-hidden border-r border-line bg-ink-950 p-12 text-white lg:flex lg:flex-col lg:justify-between">
+    <img src="{% static 'images/demo-boutique-hero.jpg' %}" alt="" class="pointer-events-none absolute inset-0 h-full w-full scale-105 object-cover blur-[2px]" aria-hidden="true">
+    <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/95 via-ink-950/55 to-ink-950/70" aria-hidden="true"></span>
+    <a href="{% url 'accounts:login' %}" class="relative inline-flex items-center gap-3 font-medium text-white">
+      <span class="grid size-10 place-items-center border border-white/60" aria-hidden="true">
         <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.8">
           <path d="M4 10h16l-1.5-5h-13L4 10Z"/>
           <path d="M5 10v9h14v-9M9 19v-5h6v5"/>
@@ -14,12 +17,12 @@
       </span>
       <span class="text-sm font-medium uppercase tracking-[0.15em]">Vitrine Digitale</span>
     </a>
-    <div class="max-w-xl pb-10">
-      <p class="tech-label mb-5 text-ink-700">Votre commerce, simplement</p>
-      <h1 class="display-type max-w-2xl text-5xl leading-[1.1] text-ink-950">Vos produits en ligne. Vos clients sur WhatsApp.</h1>
-      <p class="mt-6 max-w-md text-lg leading-8 text-ink-700">Gérez votre catalogue et gardez votre vitrine à jour sans compétence technique.</p>
+    <div class="relative max-w-xl pb-10">
+      <p class="tech-label mb-5 text-white/80">Votre commerce, simplement</p>
+      <h1 class="display-type max-w-2xl text-5xl leading-[1.1] text-white">Vos produits en ligne. Vos clients sur WhatsApp.</h1>
+      <p class="mt-6 max-w-md text-lg leading-8 text-white/85">Gérez votre catalogue et gardez votre vitrine à jour sans compétence technique.</p>
     </div>
-    <p class="tech-label text-ink-700">Pensé pour les commerçants francophones.</p>
+    <p class="relative tech-label text-white/80">Pensé pour les commerçants francophones.</p>
   </section>
 
   <section class="flex min-h-dvh items-center justify-center px-5 py-10 sm:px-10">
