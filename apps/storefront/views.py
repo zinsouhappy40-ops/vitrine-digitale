@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
@@ -19,6 +19,21 @@ from .services import (
 def home(request, slug):
     business = get_public_business(slug)
     categories, products = get_home_content(business)
+    hero_products = [product for product in products if product.image][:4]
+    category_tiles = [
+        {
+            "category": category,
+            "product": next(
+                (
+                    product
+                    for product in products
+                    if product.category_id == category.id and product.image
+                ),
+                None,
+            ),
+        }
+        for category in categories
+    ]
     return render(
         request,
         "storefront/home.html",
@@ -26,6 +41,8 @@ def home(request, slug):
             "business": business,
             "categories": categories,
             "products": products,
+            "hero_products": hero_products,
+            "category_tiles": category_tiles,
             "meta": build_page_meta(request, business),
             "whatsapp_url": get_whatsapp_url(business),
         },
@@ -38,6 +55,8 @@ def catalogue(request, slug):
     selected_category = None
     category_id = request.GET.get("categorie")
     if category_id:
+        if not category_id.isdecimal():
+            raise Http404
         selected_category = get_object_or_404(
             Category.objects.for_business(business),
             pk=category_id,

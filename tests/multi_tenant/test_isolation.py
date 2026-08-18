@@ -57,6 +57,20 @@ class DashboardTenantIsolationTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertNotContains(response, self.product_b.name, status_code=404)
 
+        post_response = self.client.post(
+            reverse("catalog:product_update", args=[self.product_b.pk]),
+            {
+                "name": "Produit volé",
+                "price": "1",
+                "category": self.category_a.pk,
+                "description": "Tentative",
+                "status": Product.Status.ACTIVE,
+            },
+        )
+        self.assertEqual(post_response.status_code, 404)
+        self.product_b.refresh_from_db()
+        self.assertEqual(self.product_b.name, "Pantalon secret B")
+
     def test_foreign_product_delete_returns_404_and_preserves_product(self):
         response = self.client.post(
             reverse("catalog:product_delete", args=[self.product_b.pk])
@@ -74,3 +88,20 @@ class DashboardTenantIsolationTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.category_b.refresh_from_db()
         self.assertEqual(self.category_b.name, "Vêtements")
+
+    def test_foreign_product_status_returns_404(self):
+        response = self.client.post(
+            reverse("catalog:product_status", args=[self.product_b.pk])
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.product_b.refresh_from_db()
+        self.assertEqual(self.product_b.status, Product.Status.ACTIVE)
+
+    def test_foreign_category_delete_returns_404(self):
+        response = self.client.post(
+            reverse("catalog:category_delete", args=[self.category_b.pk])
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Category.objects.filter(pk=self.category_b.pk).exists())

@@ -47,6 +47,28 @@ class SecurityIntegrationTests(TestCase):
         self.assertEqual(response.status_code, 429)
         self.assertContains(response, "Trop de tentatives", status_code=429)
 
+    def test_email_rate_limit_cannot_be_bypassed_with_different_ips(self):
+        url = reverse("accounts:login")
+        credentials = {
+            "username": self.owner.email.upper(),
+            "password": "wrong-password",
+        }
+        for index in range(5):
+            response = self.client.post(
+                url,
+                credentials,
+                REMOTE_ADDR=f"198.51.100.{index + 1}",
+            )
+            self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            url,
+            credentials,
+            REMOTE_ADDR="198.51.100.99",
+        )
+
+        self.assertEqual(response.status_code, 429)
+
     def test_login_and_dashboard_posts_require_csrf_token(self):
         csrf_client = Client(enforce_csrf_checks=True)
         login_response = csrf_client.post(

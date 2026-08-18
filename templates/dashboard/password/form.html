@@ -4,21 +4,21 @@
 
 {% block dashboard_content %}
 <div class="mx-auto max-w-2xl">
-  <p class="text-sm font-semibold text-ink-700">Sécurité</p>
-  <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] text-ink-950">Modifier le mot de passe</h1>
-  <p class="mt-2 text-slate-600">Utilisez un mot de passe unique que vous n’employez pas ailleurs.</p>
+  <p class="tech-label text-ink-700">Compte et sécurité</p>
+  <h1 class="display-type mt-2 text-4xl leading-tight text-ink-950 sm:text-5xl">Modifier le mot de passe</h1>
+  <p class="mt-2 text-ink-700">Utilisez un mot de passe unique que vous n’employez pas ailleurs.</p>
 
-  <form method="post" class="mt-8 space-y-6 rounded-2xl border border-line bg-white p-5 sm:p-8">
+  <form method="post" class="mt-8 space-y-6 border border-line bg-white p-5 sm:p-8" data-submit-feedback>
     {% csrf_token %}
     {% for field in form %}
       <div>
-        <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-semibold text-ink-950">{{ field.label }}</label>
+        <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-medium text-ink-950">{{ field.label }}</label>
         {{ field }}
-        {% if field.help_text %}<div class="mt-2 text-sm leading-6 text-slate-500">{{ field.help_text }}</div>{% endif %}
-        {% if field.errors %}<p class="mt-2 text-sm text-red-700">{{ field.errors|striptags }}</p>{% endif %}
+        {% if field.help_text %}<div class="mt-2 text-sm leading-6 text-ink-700">{{ field.help_text }}</div>{% endif %}
+        {% if field.errors %}<div class="field-error mt-2 text-sm font-medium text-red-700">{{ field.errors }}</div>{% endif %}
       </div>
     {% endfor %}
-    <button class="min-h-12 w-full cursor-pointer rounded-xl bg-ink-800 px-5 py-3 font-semibold text-white hover:bg-ink-700">Modifier le mot de passe</button>
+    <button type="submit" class="primary-action w-full cursor-pointer" data-submitting-text="Modification…">Modifier le mot de passe</button>
   </form>
 </div>
 {% endblock %}

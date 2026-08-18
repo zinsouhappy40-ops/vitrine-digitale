@@ -14,10 +14,11 @@ RUN pip install --no-cache-dir --upgrade pip \
 ENV HOME=/tmp
 
 COPY . .
-RUN chown -R app:app /app
+RUN chmod +x /app/docker/entrypoint.sh \
+    && chown -R app:app /app
 
 USER app
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "4", "--access-logfile", "-", "--error-logfile", "-", "config.wsgi:application"]
+CMD ["/app/docker/entrypoint.sh"]

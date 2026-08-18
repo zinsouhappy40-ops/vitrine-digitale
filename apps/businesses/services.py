@@ -20,7 +20,7 @@ def generate_temporary_password():
 
 
 def ensure_default_category(business):
-    category, _ = Category.objects.get_or_create(
+    category, _ = Category.objects.for_business(business).get_or_create(
         business=business,
         name="Divers",
         defaults={"display_order": 0},

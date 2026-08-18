@@ -13,6 +13,7 @@ from .services import (
     delete_category,
     delete_product,
     get_dashboard_summary,
+    get_recent_products,
     list_categories,
     list_products,
     rename_category,
@@ -29,6 +30,7 @@ def dashboard(request):
         {
             "business": business,
             "summary": get_dashboard_summary(business),
+            "recent_products": get_recent_products(business),
         },
     )
 
@@ -146,8 +148,12 @@ def category_rename(request, pk):
     category = get_object_or_404(Category.objects.for_business(business), pk=pk)
     form = CategoryForm(request.POST, instance=category)
     if form.is_valid():
-        rename_category(category, name=form.cleaned_data["name"])
-        messages.success(request, "Catégorie renommée.")
+        try:
+            rename_category(category, name=form.cleaned_data["name"])
+        except ValidationError as error:
+            messages.error(request, error.message)
+        else:
+            messages.success(request, "Catégorie renommée.")
     else:
         messages.error(request, "Le nom de la catégorie est invalide.")
     return redirect("catalog:category_list")

@@ -1,0 +1,2 @@
+{% load static %}
+<img src="{% static 'images/product-placeholder.svg' %}" alt="" class="{{ placeholder_class|default:'h-full w-full object-contain' }}"{% if lazy %} loading="lazy"{% endif %}>

@@ -10,12 +10,15 @@ from PIL import Image
 
 from apps.businesses.models import Business
 
+from .admin import ProductAdminForm
 from .models import Category, Product
 from .forms import ProductForm
 from .services import (
     create_category,
     create_or_update_product,
     delete_category,
+    get_recent_products,
+    rename_category,
     toggle_product_status,
 )
 
@@ -67,7 +70,41 @@ class CatalogServiceTests(TestCase):
             price=1000,
         )
         toggle_product_status(product)
+        product.refresh_from_db()
         self.assertEqual(product.status, Product.Status.INACTIVE)
+        toggle_product_status(product)
+        product.refresh_from_db()
+        self.assertEqual(product.status, Product.Status.ACTIVE)
+
+    def test_recent_products_are_tenant_scoped_and_limited(self):
+        own_products = [
+            Product.objects.create(
+                business=self.business_a,
+                category=self.default_a,
+                name=f"Produit {index}",
+                price=1000,
+            )
+            for index in range(6)
+        ]
+        Product.objects.create(
+            business=self.business_b,
+            category=self.default_b,
+            name="Produit étranger",
+            price=1000,
+        )
+
+        recent_products = list(get_recent_products(self.business_a))
+
+        self.assertEqual(len(recent_products), 5)
+        self.assertEqual(recent_products[0], own_products[-1])
+        self.assertNotIn(own_products[0], recent_products)
+
+    def test_default_category_cannot_be_renamed(self):
+        with self.assertRaises(ValidationError):
+            rename_category(self.default_a, name="Autre")
+
+        self.default_a.refresh_from_db()
+        self.assertEqual(self.default_a.name, "Divers")
 
     def test_category_delete_reassigns_products_to_default(self):
         category = Category.objects.create(
@@ -90,6 +127,25 @@ class CatalogServiceTests(TestCase):
         for product in products:
             product.refresh_from_db()
             self.assertEqual(product.category, self.default_a)
+
+    def test_category_delete_recreates_missing_default(self):
+        category = Category.objects.create(
+            business=self.business_a,
+            name="Vêtements",
+        )
+        Product.objects.create(
+            business=self.business_a,
+            category=category,
+            name="Produit",
+            price=1000,
+        )
+        self.default_a.delete()
+
+        delete_category(category)
+
+        self.assertTrue(
+            Category.objects.filter(business=self.business_a, name="Divers").exists()
+        )
 
     def test_category_name_is_unique_only_within_business(self):
         create_category(business=self.business_a, name="Accessoires")
@@ -151,3 +207,30 @@ class ProductImageIntegrationTests(TestCase):
         with product.image.open("rb") as stored_image:
             image = Image.open(stored_image)
             self.assertLessEqual(image.width, 1200)
+
+    def test_product_admin_form_uses_image_pipeline(self):
+        output = BytesIO()
+        Image.new("RGB", (1800, 900), color="red").save(output, format="PNG")
+        upload = SimpleUploadedFile(
+            "admin-original.png",
+            output.getvalue(),
+            content_type="image/png",
+        )
+        form = ProductAdminForm(
+            data={
+                "business": self.business.pk,
+                "category": self.category.pk,
+                "name": "Produit admin",
+                "price": "2500",
+                "description": "",
+                "status": Product.Status.ACTIVE,
+                "display_order": 0,
+            },
+            files={"image": upload},
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        processed_image = form.cleaned_data["image"]
+        self.assertRegex(processed_image.name, r"^[0-9a-f]{32}\.jpg$")
+        image = Image.open(processed_image)
+        self.assertLessEqual(image.width, 1200)

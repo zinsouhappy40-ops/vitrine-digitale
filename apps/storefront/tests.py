@@ -51,6 +51,9 @@ class StorefrontTests(TestCase):
         self.assertNotContains(response, self.inactive_a.name)
         self.assertNotContains(response, self.active_b.name)
         self.assertContains(response, "product-placeholder.svg")
+        self.assertEqual(response.context["hero_products"], [])
+        self.assertEqual(response.context["category_tiles"][0]["category"], self.category_a)
+        self.assertIsNone(response.context["category_tiles"][0]["product"])
 
     def test_catalogues_are_isolated_with_same_category_name(self):
         response_a = self.client.get(
@@ -64,6 +67,14 @@ class StorefrontTests(TestCase):
         self.assertNotContains(response_a, self.active_b.name)
         self.assertContains(response_b, self.active_b.name)
         self.assertNotContains(response_b, self.active_a.name)
+
+    def test_malformed_category_filter_returns_404(self):
+        response = self.client.get(
+            reverse("storefront:catalogue", args=[self.business_a.slug]),
+            {"categorie": "not-an-id"},
+        )
+
+        self.assertEqual(response.status_code, 404)
 
     def test_foreign_or_inactive_product_returns_404(self):
         foreign_response = self.client.get(

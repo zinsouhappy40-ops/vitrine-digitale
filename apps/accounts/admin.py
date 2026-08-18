@@ -1,5 +1,6 @@
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.core.exceptions import ValidationError
 
 from apps.businesses.services import reset_business_owner_password
 
@@ -34,7 +35,11 @@ class UserAdmin(DjangoUserAdmin):
             return
 
         user = queryset.first()
-        temporary_password = reset_business_owner_password(user)
+        try:
+            temporary_password = reset_business_owner_password(user)
+        except ValidationError as error:
+            self.message_user(request, error.message, level=messages.ERROR)
+            return
         self.message_user(
             request,
             f"Mot de passe temporaire pour {user.email} : {temporary_password}",

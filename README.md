@@ -23,8 +23,11 @@ L'application est ensuite accessible sur `http://localhost:8000`.
 - Appliquer les migrations : `python manage.py migrate`
 - Lancer les tests : `python manage.py test`
 - Lancer Django localement : `python manage.py runserver`
+- Installer Tailwind : `npm install`
+- Compiler le CSS : `npm run build:css`
+- Recompiler le CSS en continu : `npm run watch:css`
 
-La compilation Tailwind sera ajoutée avec les interfaces des phases dashboard et vitrine.
+Le fichier compilé `static/css/app.css` est versionné afin que l'image de production ne nécessite pas Node.js.
 
 ## Architecture
 
@@ -44,4 +47,28 @@ Le stockage local est autorisé uniquement en développement. La production util
 
 ## Production
 
-Le conteneur exécute Django avec Gunicorn et PostgreSQL. La configuration de production doit utiliser HTTPS, `DJANGO_DEBUG=False`, des hôtes explicitement autorisés, un stockage S3/R2 pour les médias et des sauvegardes quotidiennes vérifiées de la base.
+Le conteneur exécute `collectstatic`, les migrations Django, puis Gunicorn sur la variable `$PORT`. WhiteNoise sert les fichiers statiques compilés; les médias restent exclusivement sur S3/R2.
+
+Variables obligatoires :
+
+- `DJANGO_ENV=production`
+- `DJANGO_DEBUG=False`
+- `DJANGO_SECRET_KEY`
+- `ALLOWED_HOSTS`
+- `DATABASE_URL`
+- `S3_ENDPOINT_URL`
+- `S3_ACCESS_KEY`
+- `S3_SECRET_KEY`
+- `S3_BUCKET_NAME`
+
+Procédure de déploiement :
+
+1. Créer une base PostgreSQL managée avec sauvegardes quotidiennes activées.
+2. Créer un bucket S3/R2 privé dédié aux médias de production.
+3. Déployer le `Dockerfile` sur Railway, Render ou une plateforme Docker équivalente.
+4. Configurer les variables ci-dessus et exposer le port fourni par `$PORT`.
+5. Activer HTTPS et vérifier `python manage.py check --deploy`.
+6. Créer le super-admin avec `python manage.py createsuperuser`.
+7. Vérifier une restauration de sauvegarde PostgreSQL avant ouverture commerciale.
+
+Après chaque redéploiement, contrôler qu'une image déjà envoyée reste accessible afin de confirmer que les médias ne dépendent pas du disque du conteneur.

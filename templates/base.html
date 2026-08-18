@@ -17,7 +17,34 @@
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body>
+  <a href="#contenu" class="fixed left-3 top-3 z-[100] inline-flex min-h-11 -translate-y-20 items-center border border-line bg-white px-4 py-2 font-medium text-ink-950 focus:translate-y-0">Aller au contenu</a>
   {% include "shared/messages.html" %}
   {% block content %}{% endblock %}
+  <script>
+    (() => {
+      const resetSubmitButton = (button) => {
+        if (!button || !button.dataset.originalText) return;
+        button.textContent = button.dataset.originalText;
+        button.disabled = false;
+        button.removeAttribute("aria-busy");
+      };
+
+      document.querySelectorAll("form[data-submit-feedback]").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+          if (event.defaultPrevented) return;
+          const button = event.submitter || form.querySelector("button[type='submit'], button:not([type])");
+          if (!button || button.disabled) return;
+          button.dataset.originalText = button.textContent.trim();
+          button.textContent = button.dataset.submittingText || "Traitement…";
+          button.disabled = true;
+          button.setAttribute("aria-busy", "true");
+        });
+      });
+
+      window.addEventListener("pageshow", () => {
+        document.querySelectorAll("button[data-original-text]").forEach(resetSubmitButton);
+      });
+    })();
+  </script>
 </body>
 </html>

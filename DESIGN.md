@@ -1,151 +1,62 @@
-# DESIGN.md — Direction artistique — Vitrine Digitale
+# DESIGN.md - Identite editoriale chaleureuse
 
-## 1. Positionnement visuel
+## Direction
 
-Vitrine Digitale est un outil destiné à de petits commerçants qui veulent simplement présenter leurs produits en ligne et recevoir des commandes/contact via WhatsApp.
+Vitrine Digitale utilise une identite editoriale sobre et chaleureuse, commune a la vitrine publique et au dashboard. La vitrine est aeree et orientee produit. Le dashboard reprend les memes tokens avec une densite plus forte.
 
-Le design doit communiquer :
+La reference visuelle sert uniquement de niveau de finition. Les categories, images et compositions restent dynamiques et multi-tenant.
 
-- simplicité
-- confiance
-- proximité
-- modernité
-- rapidité
-- sérieux
-- accessibilité
+## Couleurs
 
-Le produit ne doit jamais donner l'impression d'être un logiciel complexe destiné à des développeurs ou à de grandes entreprises.
+- Fond principal : `#F5F1EA`
+- Fond alternatif : `#EDE7DC`
+- Cartes : `#FFFFFF`
+- Texte principal et surfaces sombres : `#1A1A1A`
+- Texte secondaire : `#6B6458`
+- Accent taupe : `#B8A88A`
+- Accent taupe soutenu : `#8B7355`
+- Bordures : `#E5DFD3`
+- WhatsApp : `#25D366`
+- Succes : `#4A7C59`
+- Erreur : `#B3452C`
 
-### Principe directeur
+## Typographie
 
-> "Un commerçant doit comprendre l'interface sans avoir besoin d'une formation."
+Une seule famille sans-serif geometrique : `General Sans`, avec repli systeme. Les poids usuels sont 400 et 500. Les titres restent legers, sans police condensee ni graisse agressive.
 
-Le produit doit être visuellement moderne mais fonctionnellement simple.
+- Logo : capitales, espacement `0.15em`, poids 500
+- Navigation : capitales, `0.8rem`, espacement `0.08em`
+- Hero : `clamp(2rem, 5vw, 3.5rem)`, poids 500
+- Libelles : `0.75rem`, capitales, espacement `0.12em`
+- Corps : `1rem`, interligne 1.5
 
----
+## Composants
 
-# 2. Architecture visuelle globale
+- Boutons rectangulaires, rayon maximal de 4px
+- Action principale noire, texte creme
+- Action secondaire transparente, bordure noire
+- WhatsApp vert avec texte blanc
+- Cartes blanches, bordure fine, sans ombre lourde
+- Images produit dans un cadre carre sur fond creme alternatif
+- Placeholder neutre en forme de sac, jamais une initiale geante
+- Champs blancs avec bordure fine et focus visible
 
-Le projet possède deux univers visuels distincts :
+## Mise En Page
 
-1. **La vitrine publique**
-2. **Le dashboard commerçant**
+L'espacement suit une echelle de 8px. Les sections publiques utilisent 48px sur mobile et 64 a 96px sur desktop. Le dashboard utilise le meme systeme avec des espacements plus compacts.
 
-Ils partagent le même système de design mais n'ont pas la même densité.
+Le hero choisit automatiquement sa composition :
 
-### Vitrine
+- aucune photo : texte centre sans zone vide
+- une photo : texte et produit en deux colonnes
+- plusieurs photos : texte et grille de produits
 
-Priorité :
+Les categories sont generees depuis les donnees du commerce. Une image de produit de la categorie sert de couverture lorsqu'elle existe ; sinon la tuile utilise un fond creme uni.
 
-1. Produit
-2. Prix
-3. Catégorie
-4. WhatsApp
-5. Informations du commerce
+## Accessibilite
 
-### Dashboard
-
-Priorité :
-
-1. Produits
-2. Actions rapides
-3. Catégories
-4. Informations du commerce
-5. Paramètres
-
----
-
-# 3. Principes fondamentaux
-
-## Mobile-first
-
-Le design doit être conçu d'abord pour :
-
-- 360px
-- 375px
-- 390px
-
-Puis adapté aux écrans plus larges.
-
-Ne jamais concevoir d'abord pour desktop puis simplement réduire.
-
----
-
-## Simplicité
-
-Chaque écran doit répondre à une question simple.
-
-Exemples :
-
-Dashboard :
-
-> "Qu'est-ce que je peux faire maintenant ?"
-
-Catalogue :
-
-> "Quels produits sont disponibles ?"
-
-Produit :
-
-> "Combien ça coûte et comment contacter le vendeur ?"
-
----
-
-## Hiérarchie visuelle
-
-Chaque page doit avoir :
-
-- 1 titre principal
-- 1 action principale
-- des informations secondaires discrètes
-
-Ne jamais avoir plusieurs boutons visuellement concurrents.
-
----
-
-# 4. CTA principal
-
-WhatsApp est le CTA principal de la vitrine.
-
-Il doit être immédiatement identifiable.
-
-### Règles
-
-Sur mobile :
-
-- bouton suffisamment grand pour être facilement touché
-- hauteur minimale recommandée : 44px
-- texte explicite
-- icône WhatsApp possible
-- contraste élevé
-
-Exemple :
-
-> Contacter sur WhatsApp
-
-Éviter :
-
-> Envoyer
-
-> Contact
-
-> Cliquez ici
-
-Le CTA doit expliquer l'action.
-
----
-
-# 5. Navigation
-
-## Vitrine
-
-Navigation extrêmement simple.
-
-Structure recommandée :
-
-```text
-Logo / Nom du commerce
-
-Accueil
-Catalogue
-Contact
+- Contraste WCAG AA pour les textes et controles
+- Focus clavier sombre sur fond clair, blanc sur fond sombre
+- Cibles tactiles de 44px minimum
+- Libelles explicites et semantiques conservees
+- Reduction des animations limitee au mouvement, sans supprimer les changements d'etat

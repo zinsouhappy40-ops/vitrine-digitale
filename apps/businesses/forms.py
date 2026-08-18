@@ -1,12 +1,11 @@
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
-from django.core.exceptions import ValidationError
 
 from apps.accounts.models import User
 from apps.core.images import validate_uploaded_image
 
-from .services import configure_business_owner
 from .models import Business
+from .services import configure_business_owner
 
 
 class BusinessOwnerInlineForm(forms.ModelForm):
@@ -63,12 +62,7 @@ class BusinessForm(forms.ModelForm):
         return self.cleaned_data["name"].strip()
 
     def clean_whatsapp_number(self):
-        number = self.cleaned_data["whatsapp_number"].strip()
-        if number and (not number.isdigit() or not 8 <= len(number) <= 15):
-            raise ValidationError(
-                "Saisissez un numéro international sans le signe +."
-            )
-        return number
+        return self.cleaned_data["whatsapp_number"].strip()
 
     def clean_phone(self):
         return self.cleaned_data["phone"].strip()

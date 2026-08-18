@@ -105,3 +105,16 @@ class AdministrationFlowTests(TestCase):
         match = re.search(r"Mot de passe temporaire : ([^<]+)", content)
         self.assertIsNotNone(match)
         self.assertTrue(owner.check_password(match.group(1).strip()))
+
+    def test_password_reset_action_rejects_super_admin_without_server_error(self):
+        response = self.client.post(
+            reverse("admin:accounts_user_changelist"),
+            {
+                "action": "reset_temporary_password",
+                "_selected_action": [self.admin.pk],
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Seul un compte propriétaire peut être réinitialisé.")

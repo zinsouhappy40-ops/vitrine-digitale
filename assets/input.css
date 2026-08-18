@@ -1,0 +1,176 @@
+@import "tailwindcss";
+@source "../templates/**/*.html";
+@source "../apps/**/*.py";
+
+@theme {
+  --color-ink-950: #1a1a1a;
+  --color-ink-800: #37342f;
+  --color-ink-700: #6b6458;
+  --color-mango-500: #b8a88a;
+  --color-mango-600: #8b7355;
+  --color-surface: #f5f1ea;
+  --color-line: #e5dfd3;
+  --color-cream: #f5f1ea;
+  --color-cream-alt: #ede7dc;
+  --color-taupe: #b8a88a;
+  --color-taupe-dark: #8b7355;
+  --color-whatsapp: #25d366;
+  --font-sans: "General Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface text-ink-950 antialiased;
+    min-width: 320px;
+  }
+
+  ::selection {
+    background: #1a1a1a;
+    color: #f5f1ea;
+  }
+
+  a,
+  button {
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-950;
+  }
+
+  .bg-ink-950 a,
+  .bg-ink-950 button {
+    @apply focus-visible:outline-white;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply min-h-12 w-full border border-line bg-white px-4 py-3 text-base text-ink-950 outline-none transition placeholder:text-ink-700 focus:border-ink-950 focus:ring-2 focus:ring-mango-500/30;
+    border-radius: 2px;
+  }
+
+  input[type="file"] {
+    @apply py-2;
+  }
+}
+
+@layer components {
+  .display-type {
+    font-family: "General Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .tech-label {
+    font-family: "General Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .cut-panel {
+    border-radius: 2px;
+  }
+
+  .cut-panel-sm {
+    border-radius: 2px;
+  }
+
+  .frost-frame {
+    position: relative;
+    background: #ede7dc;
+  }
+
+  .store-grid {
+    background-color: #f5f1ea;
+  }
+
+  .dash-grid {
+    background-color: #f5f1ea;
+  }
+
+  .primary-action {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[2px] bg-ink-950 px-8 py-3.5 text-[0.8rem] font-medium uppercase tracking-[0.08em] text-surface transition-opacity duration-[220ms] disabled:cursor-wait disabled:opacity-60;
+  }
+
+  .primary-action:hover {
+    @apply opacity-[0.85];
+  }
+
+  .secondary-action {
+    @apply inline-flex min-h-11 items-center justify-center rounded-[2px] border border-ink-950 bg-transparent px-5 py-3 text-[0.8rem] font-medium uppercase tracking-[0.08em] text-ink-950 transition-colors duration-[220ms] hover:bg-ink-950 hover:text-surface disabled:cursor-wait disabled:opacity-60;
+  }
+
+  .secondary-action-danger {
+    @apply border-red-700 text-red-700 hover:bg-red-700 hover:text-white;
+  }
+
+  .filter-action {
+    @apply inline-flex min-h-11 shrink-0 items-center justify-center rounded-[2px] border border-mango-500 px-4 py-2.5 text-[0.75rem] font-medium uppercase tracking-[0.08em] text-ink-950 transition-colors duration-[220ms] hover:border-ink-950;
+  }
+
+  .filter-action[aria-current="true"] {
+    @apply border-ink-950 bg-ink-950 text-surface;
+  }
+
+  .whatsapp-action {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[4px] bg-whatsapp px-6 py-3.5 font-medium text-ink-950 transition-opacity duration-[220ms];
+  }
+
+  .whatsapp-action:hover {
+    @apply opacity-[0.85];
+  }
+
+  .product-link img {
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), filter 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .product-link:hover img {
+    transform: scale(1.02);
+  }
+
+  .nav-link[aria-current="page"] {
+    @apply bg-cream-alt text-ink-950;
+  }
+
+  .product-card {
+    @apply overflow-hidden rounded-[2px] border border-line bg-white;
+  }
+
+  .product-card__image-wrapper {
+    @apply aspect-square overflow-hidden bg-cream-alt;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-[2px] border border-mango-500 bg-transparent px-2.5 py-1 text-[0.7rem] font-medium uppercase tracking-[0.06em] text-ink-950;
+  }
+
+  .field-error ul {
+    @apply list-none p-0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+
+  .primary-action:hover,
+  .whatsapp-action:hover,
+  .product-link:hover img {
+    transform: none;
+  }
+}

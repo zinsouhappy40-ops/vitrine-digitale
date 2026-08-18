@@ -8,6 +8,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 
 MAX_IMAGE_SIZE = 5 * 1024 * 1024
 MAX_IMAGE_WIDTH = 1200
+MAX_IMAGE_PIXELS = 40_000_000
 ALLOWED_IMAGE_FORMATS = {"JPEG", "PNG", "WEBP"}
 
 
@@ -17,6 +18,8 @@ def validate_uploaded_image(uploaded_file):
 
     try:
         image = Image.open(uploaded_file)
+        if image.width * image.height > MAX_IMAGE_PIXELS:
+            raise ValidationError("L'image contient trop de pixels.")
         image.verify()
         image_format = image.format
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:

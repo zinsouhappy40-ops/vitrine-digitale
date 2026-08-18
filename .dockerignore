@@ -10,3 +10,5 @@ htmlcov
 media
 node_modules
 staticfiles
+*.jpg
+.playwright-mcp

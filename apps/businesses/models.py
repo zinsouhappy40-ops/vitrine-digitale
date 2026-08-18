@@ -1,6 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 
@@ -8,6 +9,11 @@ from django.utils.text import slugify
 def business_logo_upload_to(instance, filename):
     extension = Path(filename).suffix.lower() or ".jpg"
     return f"businesses/logos/{uuid4().hex}{extension}"
+
+
+def validate_whatsapp_number(value):
+    if value and (not value.isdigit() or not 8 <= len(value) <= 15):
+        raise ValidationError("Saisissez un numéro international sans le signe +.")
 
 
 class Business(models.Model):
@@ -19,7 +25,11 @@ class Business(models.Model):
     slug = models.SlugField(max_length=100, unique=True, editable=False)
     logo = models.ImageField(upload_to=business_logo_upload_to, null=True, blank=True)
     description = models.TextField(blank=True)
-    whatsapp_number = models.CharField(max_length=15, blank=True)
+    whatsapp_number = models.CharField(
+        max_length=15,
+        blank=True,
+        validators=[validate_whatsapp_number],
+    )
     phone = models.CharField(max_length=30, blank=True)
     address = models.CharField(max_length=255, blank=True)
     opening_hours = models.CharField(max_length=255, blank=True)

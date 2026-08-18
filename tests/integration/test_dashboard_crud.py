@@ -48,6 +48,10 @@ class DashboardCrudTests(TestCase):
         )
         self.assertRedirects(response, reverse("catalog:product_list"))
         product = Product.objects.get(business=self.business, name="Chemise")
+        storefront_response = self.client.get(
+            reverse("storefront:catalogue", args=[self.business.slug])
+        )
+        self.assertContains(storefront_response, product.name)
 
         response = self.client.post(
             reverse("catalog:product_update", args=[product.pk]),
@@ -69,6 +73,12 @@ class DashboardCrudTests(TestCase):
         self.assertRedirects(response, reverse("catalog:product_list"))
         product.refresh_from_db()
         self.assertEqual(product.status, Product.Status.INACTIVE)
+        storefront_response = self.client.get(
+            reverse("storefront:catalogue", args=[self.business.slug])
+        )
+        self.assertNotContains(storefront_response, product.name)
+        dashboard_response = self.client.get(reverse("catalog:product_list"))
+        self.assertContains(dashboard_response, product.name)
 
         response = self.client.post(
             reverse("catalog:product_delete", args=[product.pk])

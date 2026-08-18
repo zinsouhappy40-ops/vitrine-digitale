@@ -17,6 +17,14 @@ def get_dashboard_summary(business):
     }
 
 
+def get_recent_products(business, limit=5):
+    return (
+        Product.objects.for_business(business)
+        .select_related("category")
+        .order_by("-created_at")[:limit]
+    )
+
+
 def list_products(business):
     return Product.objects.for_business(business).select_related("category")
 
@@ -33,6 +41,8 @@ def create_category(*, business, name):
 
 
 def rename_category(category, *, name):
+    if category.name.casefold() == "divers":
+        raise ValidationError("La catégorie Divers ne peut pas être renommée.")
     category.name = name.strip()
     category.full_clean()
     category.save(update_fields=["name"])
@@ -45,7 +55,11 @@ def delete_category(category):
         raise ValidationError("La catégorie Divers ne peut pas être supprimée.")
 
     business = category.business
-    default_category = Category.objects.for_business(business).get(name="Divers")
+    default_category, _ = Category.objects.for_business(business).get_or_create(
+        business=business,
+        name="Divers",
+        defaults={"display_order": 0},
+    )
     Product.objects.for_business(business).filter(category=category).update(
         category=default_category
     )

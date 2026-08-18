@@ -4,32 +4,63 @@
 
 {% block dashboard_content %}
 <div class="mx-auto max-w-5xl">
-  <p class="text-sm font-semibold text-ink-700">Tableau de bord</p>
-  <h1 class="mt-2 text-3xl font-semibold tracking-[-0.03em] text-ink-950 sm:text-4xl">{{ business.name }}</h1>
-  <p class="mt-3 max-w-2xl text-base leading-7 text-slate-600">Gardez votre catalogue à jour et partagez votre vitrine avec vos clients.</p>
+  <p class="tech-label text-ink-700">Tableau de bord</p>
+  <div class="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <h1 class="display-type text-4xl leading-tight text-ink-950 sm:text-5xl">{{ business.name }}</h1>
+    <a href="{% url 'storefront:home' business.slug %}" target="_blank" rel="noopener" class="tech-label inline-flex min-h-11 items-center self-start border border-ink-700 px-4 py-2 text-ink-950 hover:bg-ink-950 hover:text-white">Voir ma vitrine ↗</a>
+  </div>
+  <p class="mt-3 max-w-2xl text-base leading-7 text-ink-700">Gardez votre catalogue à jour et partagez votre vitrine avec vos clients.</p>
 
   <section class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-    <div class="rounded-2xl border border-line bg-white p-5">
-      <p class="text-sm font-medium text-slate-500">Produits</p>
-      <p class="mt-2 text-3xl font-semibold text-ink-950">{{ summary.product_count }}</p>
+    <div class="border border-line bg-white p-5">
+      <p class="tech-label text-ink-700">Produits</p>
+      <p class="display-type mt-2 text-4xl text-ink-950">{{ summary.product_count }}</p>
     </div>
-    <div class="rounded-2xl border border-line bg-white p-5">
-      <p class="text-sm font-medium text-slate-500">Produits actifs</p>
-      <p class="mt-2 text-3xl font-semibold text-ink-950">{{ summary.active_product_count }}</p>
+    <div class="border border-mango-500 bg-cream-alt p-5">
+      <p class="tech-label text-ink-700">Produits actifs</p>
+      <p class="display-type mt-2 text-4xl text-ink-950">{{ summary.active_product_count }}</p>
     </div>
-    <div class="col-span-2 rounded-2xl border border-line bg-white p-5 sm:col-span-1">
-      <p class="text-sm font-medium text-slate-500">Catégories</p>
-      <p class="mt-2 text-3xl font-semibold text-ink-950">{{ summary.category_count }}</p>
+    <div class="col-span-2 border border-line bg-white p-5 sm:col-span-1">
+      <p class="tech-label text-ink-700">Catégories</p>
+      <p class="display-type mt-2 text-4xl text-ink-950">{{ summary.category_count }}</p>
     </div>
   </section>
 
-  <section class="mt-8 rounded-2xl bg-ink-950 p-6 text-white sm:flex sm:items-center sm:justify-between sm:p-8">
-    <div>
-      <p class="text-sm font-semibold text-mango-500">Action principale</p>
-      <h2 class="mt-2 text-xl font-semibold">Ajoutez un produit à votre vitrine</h2>
-      <p class="mt-2 text-sm leading-6 text-slate-300">Nom, prix, catégorie : quelques informations suffisent.</p>
+  <section class="mt-8 border border-line bg-white p-5 sm:p-6" aria-labelledby="recent-products-title">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="tech-label text-ink-700">Activité récente</p>
+        <h2 id="recent-products-title" class="display-type mt-2 text-3xl text-ink-950">Derniers produits ajoutés</h2>
+      </div>
+      <a href="{% url 'catalog:product_list' %}" class="secondary-action hidden sm:inline-flex">Gérer les produits</a>
     </div>
-    <a href="{% url 'catalog:product_create' %}" class="mt-5 inline-flex min-h-12 items-center justify-center rounded-xl bg-mango-500 px-5 py-3 font-semibold text-ink-950 transition hover:bg-mango-600 sm:mt-0">Ajouter un produit</a>
+    {% if recent_products %}
+      <div class="mt-5 divide-y divide-line/70">
+        {% for product in recent_products %}
+          <a href="{% url 'catalog:product_update' product.pk %}" class="group flex min-h-16 items-center gap-3 py-3">
+            <span class="size-12 shrink-0 overflow-hidden bg-cream-alt">
+              {% if product.image %}<img src="{{ product.image.url }}" alt="" class="h-full w-full object-cover">{% else %}{% include "shared/product_placeholder.html" with placeholder_class="h-full w-full object-contain p-2" %}{% endif %}
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="line-clamp-1 block font-medium text-ink-950 group-hover:underline">{{ product.name }}</span>
+              <span class="mt-1 block text-sm text-ink-700">{{ product.category.name }} · {{ product.price|floatformat:-2 }} {{ business.currency }}</span>
+            </span>
+            <span class="tech-label hidden shrink-0 text-ink-700 sm:block" aria-hidden="true">Modifier ↗</span>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="mt-5 text-ink-700">Aucun produit ajouté pour le moment.</p>
+    {% endif %}
+  </section>
+
+  <section class="mt-8 border border-line bg-cream-alt p-6 sm:flex sm:items-center sm:justify-between sm:p-8">
+    <div>
+      <p class="tech-label text-ink-700">Action principale</p>
+      <h2 class="display-type mt-2 text-3xl">Ajoutez un produit à votre vitrine</h2>
+      <p class="mt-2 text-sm leading-6 text-ink-700">Nom, prix, catégorie : quelques informations suffisent.</p>
+    </div>
+    <a href="{% url 'catalog:product_create' %}" class="primary-action mt-5 sm:mt-0">Ajouter un produit</a>
   </section>
 </div>
 {% endblock %}

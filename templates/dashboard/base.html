@@ -1,54 +1,58 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-dvh lg:grid lg:grid-cols-[16rem_1fr]">
-  <aside class="border-b border-line bg-white px-4 py-3 lg:min-h-dvh lg:border-b-0 lg:border-r lg:px-5 lg:py-6">
+<div class="dash-grid min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
+  <aside class="border-b border-line bg-white px-4 py-3 text-ink-950 lg:sticky lg:top-0 lg:min-h-dvh lg:border-b-0 lg:border-r lg:px-5 lg:py-6">
     <div class="flex items-center justify-between lg:block">
-      <a href="{% url 'catalog:dashboard' %}" class="inline-flex items-center gap-3 font-semibold text-ink-950">
-        <span class="grid size-9 place-items-center rounded-xl bg-mango-500" aria-hidden="true">
+      <a href="{% url 'catalog:dashboard' %}" class="inline-flex items-center gap-3 font-medium text-ink-950">
+        <span class="grid size-9 place-items-center border border-mango-500 text-ink-950" aria-hidden="true">
           <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M4 10h16l-1.5-5h-13L4 10Z"/>
             <path d="M5 10v9h14v-9M9 19v-5h6v5"/>
           </svg>
         </span>
-        <span>Vitrine Digitale</span>
+        <span class="text-sm font-medium uppercase tracking-[0.15em]">Vitrine Digitale</span>
       </a>
-      <form method="post" action="{% url 'accounts:logout' %}" class="lg:hidden">
-        {% csrf_token %}
-        <button class="min-h-11 cursor-pointer px-2 text-sm font-semibold text-slate-600">Déconnexion</button>
-      </form>
     </div>
 
-    <nav class="mt-4 flex gap-2 overflow-x-auto pb-1 lg:mt-10 lg:block lg:space-y-1" aria-label="Navigation principale">
-      <a href="{% url 'catalog:dashboard' %}" class="flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition {% if request.resolver_match.url_name == 'dashboard' %}bg-ink-950 text-white{% else %}text-slate-600 hover:bg-surface hover:text-ink-950{% endif %}">
+    <nav class="mt-4 grid grid-cols-2 gap-2 pb-1 lg:mt-10 lg:block lg:space-y-1" aria-label="Navigation principale">
+      <a href="{% url 'catalog:dashboard' %}" class="nav-link flex min-h-11 shrink-0 items-center gap-3 border border-transparent px-3.5 py-2.5 text-sm font-medium text-ink-700 transition hover:border-line hover:text-ink-950" {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
         <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 13h6V4H4v9Zm10 7h6v-9h-6v9ZM4 20h6v-3H4v3Zm10-13h6V4h-6v3Z"/></svg>
         Vue d’ensemble
       </a>
-      <a href="{% url 'catalog:product_list' %}" class="flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition {% if request.resolver_match.url_name == 'product_list' or request.resolver_match.url_name == 'product_create' or request.resolver_match.url_name == 'product_update' %}bg-ink-950 text-white{% else %}text-slate-600 hover:bg-surface hover:text-ink-950{% endif %}">
+      <a href="{% url 'catalog:product_list' %}" class="nav-link flex min-h-11 shrink-0 items-center gap-3 border border-transparent px-3.5 py-2.5 text-sm font-medium text-ink-700 transition hover:border-line hover:text-ink-950" {% if request.resolver_match.url_name == 'product_list' or request.resolver_match.url_name == 'product_create' or request.resolver_match.url_name == 'product_update' %}aria-current="page"{% endif %}>
         <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm3 0V6a4 4 0 0 1 8 0v2"/></svg>
         Produits
       </a>
-      <a href="{% url 'catalog:category_list' %}" class="flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition {% if request.resolver_match.url_name == 'category_list' %}bg-ink-950 text-white{% else %}text-slate-600 hover:bg-surface hover:text-ink-950{% endif %}">
+      <a href="{% url 'catalog:category_list' %}" class="nav-link flex min-h-11 shrink-0 items-center gap-3 border border-transparent px-3.5 py-2.5 text-sm font-medium text-ink-700 transition hover:border-line hover:text-ink-950" {% if request.resolver_match.url_name == 'category_list' %}aria-current="page"{% endif %}>
         <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h7v7H4V7Zm9 0h7v7h-7V7ZM4 16h7v4H4v-4Zm9 0h7v4h-7v-4Z"/></svg>
         Catégories
       </a>
-      <a href="{% url 'businesses:settings' %}" class="flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition {% if request.resolver_match.url_name == 'settings' %}bg-ink-950 text-white{% else %}text-slate-600 hover:bg-surface hover:text-ink-950{% endif %}">
+      <a href="{% url 'businesses:settings' %}" class="nav-link flex min-h-11 shrink-0 items-center gap-3 border border-transparent px-3.5 py-2.5 text-sm font-medium text-ink-700 transition hover:border-line hover:text-ink-950" {% if request.resolver_match.url_name == 'settings' %}aria-current="page"{% endif %}>
         <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10h16l-1.5-5h-13L4 10Zm1 0v9h14v-9M9 19v-5h6v5"/></svg>
         Commerce
       </a>
     </nav>
 
-    <div class="mt-auto hidden border-t border-line pt-5 lg:absolute lg:bottom-6 lg:block lg:w-[13.5rem]">
-      <p class="truncate text-sm font-semibold text-ink-950">{{ request.user.email }}</p>
-      <a href="{% url 'businesses:password_change' %}" class="mt-2 block min-h-9 text-sm font-medium text-slate-500 hover:text-ink-950">Modifier le mot de passe</a>
-      <form method="post" action="{% url 'accounts:logout' %}" class="mt-2">
+    <div class="mt-3 flex items-center justify-between border-t border-line pt-3 lg:hidden">
+      <a href="{% url 'businesses:password_change' %}" class="inline-flex min-h-11 items-center text-sm text-ink-700 hover:text-ink-950">Mot de passe</a>
+      <form method="post" action="{% url 'accounts:logout' %}" data-submit-feedback>
         {% csrf_token %}
-        <button class="min-h-11 cursor-pointer text-sm font-semibold text-slate-600 transition hover:text-ink-950">Se déconnecter</button>
+        <button type="submit" class="min-h-11 cursor-pointer px-2 text-sm font-medium text-ink-700 disabled:opacity-60" data-submitting-text="Déconnexion…">Déconnexion</button>
+      </form>
+    </div>
+
+    <div class="mt-auto hidden border-t border-line pt-5 lg:absolute lg:bottom-6 lg:block lg:w-[14.5rem]">
+      <p class="truncate text-sm font-medium">{{ request.user.email }}</p>
+      <a href="{% url 'businesses:password_change' %}" class="mt-2 block min-h-9 text-sm text-ink-700 hover:text-ink-950">Modifier le mot de passe</a>
+      <form method="post" action="{% url 'accounts:logout' %}" class="mt-2" data-submit-feedback>
+        {% csrf_token %}
+        <button type="submit" class="min-h-11 cursor-pointer text-sm font-medium text-ink-700 transition hover:text-ink-950 disabled:opacity-60" data-submitting-text="Déconnexion…">Se déconnecter</button>
       </form>
     </div>
   </aside>
 
-  <main class="px-5 py-8 sm:px-8 lg:px-12 lg:py-10">
+  <main id="contenu" class="px-5 py-8 sm:px-8 lg:px-12 lg:py-10">
     {% block dashboard_content %}{% endblock %}
   </main>
 </div>

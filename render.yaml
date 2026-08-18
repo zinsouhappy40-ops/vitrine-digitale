@@ -1,0 +1,34 @@
+databases:
+  - name: vitrine-digitale-demo-db
+    plan: free
+    region: frankfurt
+
+services:
+  - type: web
+    name: vitrine-digitale-demo
+    runtime: python
+    plan: free
+    region: frankfurt
+    branch: render-demo
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    healthCheckPath: /connexion/
+    autoDeployTrigger: off
+    envVars:
+      - key: DJANGO_ENV
+        value: production
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vitrine-digitale-demo-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        fromService:
+          name: vitrine-digitale-demo
+          type: web
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
+      - key: USE_S3_STORAGE
+        value: "False"

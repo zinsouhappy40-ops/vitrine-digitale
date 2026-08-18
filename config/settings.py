@@ -12,8 +12,14 @@ if env_file.exists():
     environ.Env.read_env(env_file)
 
 DJANGO_ENV = env("DJANGO_ENV")
+if DJANGO_ENV not in {"development", "production"}:
+    raise ImproperlyConfigured(
+        "DJANGO_ENV doit valoir 'development' ou 'production'."
+    )
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG")
+if DJANGO_ENV == "production" and DEBUG:
+    raise ImproperlyConfigured("DJANGO_DEBUG doit être False en production.")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 # INSTALLED_APPS
@@ -35,6 +41,7 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -116,10 +123,13 @@ S3_BUCKET_NAME = env("S3_BUCKET_NAME", default="")
 S3_CONFIGURED = all(
     (S3_ENDPOINT_URL, S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET_NAME)
 )
-if DJANGO_ENV == "production" and not S3_CONFIGURED:
-    raise ImproperlyConfigured("La configuration S3 est obligatoire en production.")
+USE_S3_STORAGE = env.bool("USE_S3_STORAGE", default=S3_CONFIGURED)
+if USE_S3_STORAGE and not S3_CONFIGURED:
+    raise ImproperlyConfigured(
+        "Les variables S3 sont obligatoires lorsque USE_S3_STORAGE=True."
+    )
 
-if S3_CONFIGURED:
+if USE_S3_STORAGE:
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.s3.S3Storage",
@@ -130,11 +140,11 @@ if S3_CONFIGURED:
                 "bucket_name": S3_BUCKET_NAME,
                 "default_acl": None,
                 "file_overwrite": False,
-                "querystring_auth": False,
+                "querystring_auth": True,
             },
         },
         "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
 else:
@@ -143,7 +153,11 @@ else:
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+            "BACKEND": (
+                "whitenoise.storage.CompressedManifestStaticFilesStorage"
+                if DJANGO_ENV == "production"
+                else "django.contrib.staticfiles.storage.StaticFilesStorage"
+            ),
         },
     }
 

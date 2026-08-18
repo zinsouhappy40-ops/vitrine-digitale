@@ -6,8 +6,16 @@ from django_ratelimit.decorators import ratelimit
 from .forms import EmailAuthenticationForm
 
 
+def login_email_key(group, request):
+    return (request.POST.get("username") or "").strip().casefold()
+
+
 @method_decorator(
-    ratelimit(key="ip", rate="5/15m", method="POST", block=False),
+    ratelimit(key=login_email_key, rate="5/10m", method="POST", block=False),
+    name="dispatch",
+)
+@method_decorator(
+    ratelimit(key="ip", rate="5/10m", method="POST", block=False),
     name="dispatch",
 )
 class EmailLoginView(LoginView):
