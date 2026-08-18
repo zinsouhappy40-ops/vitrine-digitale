@@ -153,6 +153,7 @@ if USE_S3_STORAGE:
                 "file_overwrite": False,
                 "querystring_auth": True,
                 "addressing_style": "path",
+                "signature_version": "s3v4",
             },
         },
         "staticfiles": {

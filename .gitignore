@@ -12,5 +12,6 @@ htmlcov/
 *.sqlite3
 node_modules/
 staticfiles/
+supabase/.temp/
 media/
 .playwright-mcp/
