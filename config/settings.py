@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import environ
@@ -77,6 +78,13 @@ DATABASES = {
 }
 DATABASES["default"]["CONN_MAX_AGE"] = 60
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+DATABASE_SCHEMA = env("DATABASE_SCHEMA", default="")
+if DATABASE_SCHEMA:
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", DATABASE_SCHEMA):
+        raise ImproperlyConfigured("DATABASE_SCHEMA contient un nom invalide.")
+    DATABASES["default"].setdefault("OPTIONS", {})["options"] = (
+        f"-c search_path={DATABASE_SCHEMA},public"
+    )
 
 CACHES = {
     "default": {
@@ -121,6 +129,7 @@ S3_ENDPOINT_URL = env("S3_ENDPOINT_URL", default="")
 S3_ACCESS_KEY = env("S3_ACCESS_KEY", default="")
 S3_SECRET_KEY = env("S3_SECRET_KEY", default="")
 S3_BUCKET_NAME = env("S3_BUCKET_NAME", default="")
+S3_REGION_NAME = env("S3_REGION_NAME", default="")
 S3_CONFIGURED = all(
     (S3_ENDPOINT_URL, S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET_NAME)
 )
@@ -139,9 +148,11 @@ if USE_S3_STORAGE:
                 "access_key": S3_ACCESS_KEY,
                 "secret_key": S3_SECRET_KEY,
                 "bucket_name": S3_BUCKET_NAME,
+                "region_name": S3_REGION_NAME or None,
                 "default_acl": None,
                 "file_overwrite": False,
                 "querystring_auth": True,
+                "addressing_style": "path",
             },
         },
         "staticfiles": {

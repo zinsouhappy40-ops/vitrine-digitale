@@ -23,15 +23,25 @@ services:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        fromDatabase:
-          name: vitrine-digitale-demo-db
-          property: connectionString
+        sync: false
+      - key: DATABASE_SCHEMA
+        value: vitrine_digitale
       - key: ALLOWED_HOSTS
         fromService:
           name: vitrine-digitale-demo
           type: web
           envVarKey: RENDER_EXTERNAL_HOSTNAME
       - key: USE_S3_STORAGE
-        value: "False"
-      - key: SERVE_MEDIA_FILES
         value: "True"
+      - key: SERVE_MEDIA_FILES
+        value: "False"
+      - key: S3_ENDPOINT_URL
+        value: https://cqvoaewiwirmjotkudjy.storage.supabase.co/storage/v1/s3
+      - key: S3_REGION_NAME
+        value: eu-west-1
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        value: vitrine-media
