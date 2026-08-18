@@ -33,3 +33,5 @@ services:
           envVarKey: RENDER_EXTERNAL_HOSTNAME
       - key: USE_S3_STORAGE
         value: "False"
+      - key: SERVE_MEDIA_FILES
+        value: "True"
