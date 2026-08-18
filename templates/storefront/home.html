@@ -6,11 +6,11 @@
 {% block storefront_content %}
 <main id="contenu">
   <section class="relative overflow-hidden bg-cream-alt">
-    <img src="{% static 'images/demo-boutique-hero.jpg' %}" alt="" class="pointer-events-none absolute inset-0 h-full w-full scale-[1.03] object-cover opacity-90 blur-[4px] saturate-75" aria-hidden="true">
-    <span class="pointer-events-none absolute inset-0 bg-cream-alt/75 lg:bg-gradient-to-r lg:from-cream-alt/95 lg:via-cream-alt/70 lg:to-cream-alt/40" aria-hidden="true"></span>
+    <img src="{% static 'images/demo-boutique-hero.jpg' %}" alt="" class="pointer-events-none absolute inset-0 h-full w-full scale-[1.02] object-cover blur-[2px] saturate-90" aria-hidden="true">
+    <span class="pointer-events-none absolute inset-0 bg-ink-950/15" aria-hidden="true"></span>
     <div class="relative mx-auto max-w-7xl px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
       <div class="{% if hero_products %}grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16{% else %}mx-auto max-w-3xl py-12 text-center lg:py-20{% endif %}">
-        <div>
+        <div class="border border-white/60 bg-cream-alt/90 p-6 shadow-[0_16px_40px_rgba(26,26,26,0.12)] backdrop-blur-[2px] sm:p-8 lg:-ml-8">
           <p class="tech-label text-ink-700">{{ categories|length }} catégorie{{ categories|length|pluralize }}</p>
           <h1 class="display-type mt-4 break-words text-[clamp(2.25rem,5vw,3.5rem)] leading-[1.1] text-ink-950">{{ business.name }}</h1>
           {% if business.description %}<p class="mt-6 max-w-xl text-base leading-7 text-ink-700 {% if not hero_products %}mx-auto{% endif %}">{{ business.description }}</p>{% else %}<p class="mt-6 max-w-xl text-base leading-7 text-ink-700 {% if not hero_products %}mx-auto{% endif %}">Découvrez les produits disponibles et échangez directement avec le commerce.</p>{% endif %}
